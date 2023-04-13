@@ -7,7 +7,7 @@ data <- read.csv("BigmacPrice.csv")
 # criando um sumário de cada espécie e salvando em daframes separados
 Tabela_a <- data %>%
   group_by(name) %>%
-  summarise(Moda = as.numeric(names(table(dollar_price)[table(dollar_price) == max(table(dollar_price))])),
+  summarise(Moda = as.numeric(names(table(dollar_price)[table(dollar_price) == max(table(dollar_price))])[1]),
             Média = median(dollar_price),
             Mediana = mean(dollar_price),
             `Desvio padrão` = sd(dollar_price))
@@ -45,13 +45,13 @@ ui <- fluidPage(
     mainPanel(
       # Output: Tabset w/ plot, summary, and table ----
       tabsetPanel(type = "tabs",
-      tabPanel("Gráfico de Linha", plotOutput("line_chart")),
-      tabPanel("Histograma", plotOutput("histogram")),
-      tabPanel("Boxplot", plotOutput("boxplot")),
-      tabPanel("Tabela de Dados", tableOutput("table"))
+                  tabPanel("Gráfico de Linha", plotOutput("line_chart")),
+                  tabPanel("Histograma", plotOutput("histogram")),
+                  tabPanel("Boxplot", plotOutput("boxplot")),
+                  tabPanel("Tabela de Dados", tableOutput("table"))
       )
+    )
   )
-)
 )
 server <- function(input, output){
   filtered_data <- reactive({
@@ -105,7 +105,7 @@ server <- function(input, output){
         xlab("País") +
         ylab("Preço do Big Mac")
     })
-
+    
   })
   
 }
