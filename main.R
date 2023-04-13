@@ -48,11 +48,11 @@ ui <- fluidPage(
       tabPanel("Gráfico de Linha", plotOutput("line_chart")),
       tabPanel("Histograma", plotOutput("histogram")),
       tabPanel("Boxplot", plotOutput("boxplot")),
-      tabPanel("Tabela de Dados", plotOutput("table"))
-    )
+      tabPanel("Tabela de Dados", tableOutput("table"))
+      )
   )
 )
-
+)
 server <- function(input, output){
   filtered_data <- reactive({
     data %>%
