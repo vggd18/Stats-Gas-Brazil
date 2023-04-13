@@ -7,22 +7,16 @@ data <- read.csv("BigmacPrice.csv")
 # Define UI
 ui <- fluidPage(
   # TITULO DO APP
-  titlePanel("Análise do preço da gasolina"),
+  titlePanel("Análise do preço dos Big Mac's"),
   # Barra lateral com os inputs
   sidebarLayout(
     # painel da Barra Lateral
     sidebarPanel(
-      # Input de Seleção de quais produtos Analisar
-      selectInput(inputId = "name", 
-        label = "Choose a Country", 
-        choices = unique(data$name)), 
-        plotOutput("line"),
-      
       checkboxGroupInput(
         inputId = "main",
         label = "Select Currency", 
         choices = c("Brazil", "USA", "China"),
-        selected = "Brazil"
+        selected = NULL
       ),
       # Input com as datas iniciais e finais para Análise
       dateInput("start_date", "Data Inicial:", value = min(data$date)),
@@ -33,11 +27,6 @@ ui <- fluidPage(
     
     #painel principal
     mainPanel(
-      # Output: Tabset w/ plot, summary, and table ----
-      #tabsetPanel(type = "tabs",
-      #tabPanel("Linha", plotOutput("line_chart")),
-      #tabPanel("Histograma", plotOutput("histogram"))
-      
       tags$h3("Gráfico de Linha"),
       plotOutput("line_chart"),
       tags$h3("Histograma"),
@@ -77,6 +66,7 @@ server <- function(input, output){
     output$line_chart <- renderPlot({
       plot_line_chart(filtered_data())
     })
+    
     output$histogram <- renderPlot({
       ggplot(filtered_data(), aes(x = date, y = !sym("dollar_price"))) +
         geom_histogram(bins = 30) +
