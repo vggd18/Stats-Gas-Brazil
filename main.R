@@ -44,18 +44,11 @@ ui <- fluidPage(
     #painel principal
     mainPanel(
       # Output: Tabset w/ plot, summary, and table ----
-      #tabsetPanel(type = "tabs",
-      #tabPanel("Linha", plotOutput("line_chart")),
-      #tabPanel("Histograma", plotOutput("histogram"))
-      
-      tags$h3("Gráfico de Linha"),
-      plotOutput("line_chart"),
-      tags$h3("Histograma"),
-      plotOutput("histogram"),
-      tags$h3("Boxplot"),
-      plotOutput("boxplot"),
-      tags$h3("Tabela de Dados"), 
-      tableOutput('table')
+      tabsetPanel(type = "tabs",
+      tabPanel("Gráfico de Linha", plotOutput("line_chart")),
+      tabPanel("Histograma", plotOutput("histogram")),
+      tabPanel("Boxplot", plotOutput("boxplot")),
+      tabPanel("Tabela de Dados", plotOutput("table"))
     )
   )
 )
