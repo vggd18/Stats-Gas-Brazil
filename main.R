@@ -4,6 +4,14 @@ library(dplyr)
 
 data <- read.csv("BigmacPrice.csv")
 
+# criando um sumário de cada espécie e salvando em daframes separados
+Tabela_a <- data %>%
+  group_by(name) %>%
+  summarise(Moda = as.numeric(names(table(dollar_price)[table(dollar_price) == max(table(dollar_price))])),
+            Média = median(dollar_price),
+            Mediana = mean(dollar_price),
+            `Desvio padrão` = sd(dollar_price))
+
 # Define UI
 ui <- fluidPage(
   # TITULO DO APP
@@ -12,21 +20,23 @@ ui <- fluidPage(
   sidebarLayout(
     # painel da Barra Lateral
     sidebarPanel(
-      # Input de Seleção de quais produtos Analisar
-      selectInput(inputId = "name", 
-                  label = "Choose a Country", 
-                  choices = unique(data$name)), 
-      plotOutput("line"),
-      
+      #checkbox
       checkboxGroupInput(
         inputId = "main",
         label = "Select Currency", 
         choices = c("Brazil", "USA", "China"),
         selected = NULL
       ),
+      
       # Input com as datas iniciais e finais para Análise
       dateInput("start_date", "Data Inicial:", value = min(data$date)),
       dateInput("end_date", "Data Final:", value = max(data$date)),
+      
+      selectInput(inputId = "name", 
+                  label = "Choose a Country", 
+                  choices = unique(data$name)), 
+      plotOutput("line"),
+      
       # Botão para atualizar os gráficos
       actionButton("update_button", "Atualizar")
     ),
@@ -41,18 +51,21 @@ ui <- fluidPage(
       tags$h3("Gráfico de Linha"),
       plotOutput("line_chart"),
       tags$h3("Histograma"),
-      plotOutput("histogram")
+      plotOutput("histogram"),
+      tags$h3("Tabela de Dados"), 
+      tableOutput('table')
     )
   )
 )
 
 server <- function(input, output){
-  
   filtered_data <- reactive({
     data %>%
       filter(date >= input$start_date & date <= input$end_date) %>%
       filter(name %in% input$main)
   })
+  # tabela dos dados sumarizados
+  output$table <- renderTable(Tabela_a)
   
   plot_line_chart <- function(data) {
     ggplot(data, aes(x = date, y = !!sym("dollar_price"), color = name, group = name)) +
