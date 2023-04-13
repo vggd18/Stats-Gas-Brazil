@@ -17,27 +17,26 @@ ui <- fluidPage(
   # TITULO DO APP
   titlePanel("Análise do preço dos Big Mac's"),
   # Barra lateral com os inputs
-  
   sidebarLayout(
     # painel da Barra Lateral
     sidebarPanel(
-      #Checkbox para o gráfico de Linha
-      tag$h2("Gráfico de Linha"),
+      #checkbox
       checkboxGroupInput(
         inputId = "main",
-        label = "Escolha o País", 
+        label = "Select Currency", 
         choices = c("Brazil", "USA", "China"),
         selected = NULL
       ),
-      #Input para o Histograma
-      tag$h2("Histograma"),
+      
+      # Input com as datas iniciais e finais para Análise
+      dateInput("start_date", "Data Inicial:", value = min(data$date)),
+      dateInput("end_date", "Data Final:", value = max(data$date)),
+      
       selectInput(inputId = "name", 
                   label = "Choose a Country", 
                   choices = unique(data$name)), 
       plotOutput("line"),
-      # Input com as datas iniciais e finais para Análise
-      dateInput("start_date", "Data Inicial:", value = min(data$date)),
-      dateInput("end_date", "Data Final:", value = max(data$date)),
+      
       # Botão para atualizar os gráficos
       actionButton("update_button", "Atualizar")
     ),
@@ -55,13 +54,11 @@ ui <- fluidPage(
   )
 )
 server <- function(input, output){
-  # criando um dataframe reativo para ajudar na vizualização
   filtered_data <- reactive({
     data %>%
       filter(date >= input$start_date & date <= input$end_date) %>%
       filter(name %in% input$main)
   })
-  
   # tabela dos dados sumarizados
   output$table <- renderTable(Tabela_a)
   
