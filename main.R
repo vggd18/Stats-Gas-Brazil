@@ -12,6 +12,12 @@ ui <- fluidPage(
   sidebarLayout(
     # painel da Barra Lateral
     sidebarPanel(
+      # Input de Seleção de quais produtos Analisar
+      selectInput(inputId = "name", 
+                  label = "Choose a Country", 
+                  choices = unique(data$name)), 
+      plotOutput("line"),
+      
       checkboxGroupInput(
         inputId = "main",
         label = "Select Currency", 
@@ -27,6 +33,11 @@ ui <- fluidPage(
     
     #painel principal
     mainPanel(
+      # Output: Tabset w/ plot, summary, and table ----
+      #tabsetPanel(type = "tabs",
+      #tabPanel("Linha", plotOutput("line_chart")),
+      #tabPanel("Histograma", plotOutput("histogram"))
+      
       tags$h3("Gráfico de Linha"),
       plotOutput("line_chart"),
       tags$h3("Histograma"),
@@ -56,19 +67,19 @@ server <- function(input, output){
   })
   
   output$histogram <- renderPlot({
-    ggplot(filtered_data(), aes(x = date, y = !!sym("dollar_price")), color = "name", group = "name") +
+    ggplot(data %>% filter(name %in% input$name), aes(x = !!sym("dollar_price"), color = name, group = name)) +
       geom_histogram(bins = 30) +
       labs(x = "Preço da moeda", y = "Frequência") +
       theme_minimal()
   })
   
+  
   observeEvent(input$update_button, {
     output$line_chart <- renderPlot({
       plot_line_chart(filtered_data())
     })
-    
     output$histogram <- renderPlot({
-      ggplot(filtered_data(), aes(x = date, y = !sym("dollar_price"))) +
+      ggplot(data %>% filter(name %in% input$name), aes(x = !!sym("dollar_price"), color = name, group = name)) +
         geom_histogram(bins = 30) +
         labs(x = "Preço da moeda", y = "Frequência") +
         theme_minimal()
