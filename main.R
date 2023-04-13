@@ -41,7 +41,9 @@ ui <- fluidPage(
       tags$h3("Gráfico de Linha"),
       plotOutput("line_chart"),
       tags$h3("Histograma"),
-      plotOutput("histogram")
+      plotOutput("histogram"),
+      tags$h3("Boxplot"),
+      plotOutput("boxplot")
     )
   )
 )
@@ -73,6 +75,13 @@ server <- function(input, output){
       theme_minimal()
   })
   
+  output$boxplot <- renderPlot({
+    ggplot(filtered_data(), aes(x = name, y = dollar_price)) +
+      geom_boxplot(fill="slateblue", alpha=0.2) + 
+      xlab("País") +
+      ylab("Preço do Big Mac")
+  })
+  
   
   observeEvent(input$update_button, {
     output$line_chart <- renderPlot({
@@ -84,6 +93,13 @@ server <- function(input, output){
         labs(x = "Preço da moeda", y = "Frequência") +
         theme_minimal()
     })
+    output$boxplot <- renderPlot({
+      ggplot(filtered_data(), aes(x = name, y = dollar_price)) +
+        geom_boxplot(fill="slateblue", alpha=0.2) + 
+        xlab("País") +
+        ylab("Preço do Big Mac")
+    })
+
   })
   
 }
